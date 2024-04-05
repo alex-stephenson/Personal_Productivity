@@ -9,11 +9,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
-
-
-```
-
-```{r}
 library(tidyverse)
 library(pdftools)
 dir <- file.info(list.files(".", full.names = T))
@@ -44,7 +39,7 @@ sains_order_df$person <- NULL
 colnames(sains_order_df) <- c('Items', 'Cost')
 
 st=format(Sys.time(), "%d-%m-%Y")
-output_name = paste("sains_order_2",st, ".csv", sep = "")
+output_name = paste("sains_order",st, ".csv", sep = "")
 
 write_csv(sains_order_df, output_name)
 
