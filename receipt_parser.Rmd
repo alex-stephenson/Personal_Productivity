@@ -1,0 +1,52 @@
+---
+title: "pdf_parser"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+
+
+```
+
+```{r}
+library(tidyverse)
+library(pdftools)
+dir <- file.info(list.files(".", full.names = T))
+dir$file_name <- rownames(dir)
+
+dir_filtered <- dir %>% 
+  filter(str_detect(file_name, '\\.pdf'))
+
+file_name <- rownames(dir_filtered)[which.max(dir_filtered$mtime)]
+file_name <- substring(file_name, 3)
+
+sains_order <- pdf_text(file_name) %>% 
+  readr::read_lines() %>% 
+  str_squish() %>% #extract the text
+  as.data.frame()
+
+
+colnames(sains_order) <- c('Items')
+sains_order_fil <- sains_order %>% 
+  filter(str_detect(Items, '£'))
+  
+
+sains_order_df <- do.call(rbind, str_split(sains_order_fil$Items, ' £')) %>% 
+  as.data.frame()
+
+sains_order_df$V2 <- gsub("[^0-9.]", "", sains_order_df$V2) 
+sains_order_df$person <- NULL
+colnames(sains_order_df) <- c('Items', 'Cost')
+
+st=format(Sys.time(), "%d-%m-%Y")
+output_name = paste("sains_order_2",st, ".csv", sep = "")
+
+write_csv(sains_order_df, output_name)
+
+```
+
